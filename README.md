@@ -2,7 +2,7 @@
 
 A production-ready medical chatbot built using **LangChain**, **Pinecone**, **Groq (LLaMA 3.3)**, and **Flask**. It uses Retrieval-Augmented Generation (RAG) to answer medical questions from a custom PDF knowledge base.
 
-![App Screenshot](Medical Chatbot\research\image_1.png)
+![App Screenshot](images/image_1.png)
 
 ---
 
