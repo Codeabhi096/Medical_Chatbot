@@ -1,5 +1,9 @@
 # Build-a-Complete-Medical-Chatbot-with-LLMs-LangChain-Pinecone-Flask-AWS
 
+
+
+<img src = "C:\Users\abhi3\OneDrive\Desktop\Medical Chatbot\research\image_1.png">
+
 # How to run?
 ### STEPS:
 
