@@ -1,12 +1,11 @@
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.schema import Document
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.documents import Document         
 from typing import List
 import os
 
 
-# Extract Data From the PDF Files
 def load_pdf_file(data_path: str) -> List[Document]:
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"Path not found: {data_path}")
@@ -16,7 +15,6 @@ def load_pdf_file(data_path: str) -> List[Document]:
         glob="*.pdf",
         loader_cls=PyPDFLoader
     )
-
     documents = loader.load()
 
     if not documents:
@@ -25,44 +23,30 @@ def load_pdf_file(data_path: str) -> List[Document]:
     return documents
 
 
-# Keep only minimal metadata
 def filter_to_minimal_docs(docs: List[Document]) -> List[Document]:
-    minimal_docs: List[Document] = []
-
-    for doc in docs:
-        src = doc.metadata.get("source", "unknown")
-
-        minimal_docs.append(
-            Document(
-                page_content=doc.page_content.strip(),
-                metadata={"source": src}
-            )
+    return [
+        Document(
+            page_content=doc.page_content.strip(),
+            metadata={"source": doc.metadata.get("source", "unknown")}
         )
+        for doc in docs
+    ]
 
-    return minimal_docs
 
-
-# Split the Data into Text Chunks
 def text_split(extracted_data: List[Document]) -> List[Document]:
     if not extracted_data:
         raise ValueError("No documents provided for splitting!")
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
-        chunk_overlap=50  # increased for better context retention
+        chunk_overlap=50
     )
-
-    text_chunks = text_splitter.split_documents(extracted_data)
-
-    return text_chunks
+    return text_splitter.split_documents(extracted_data)
 
 
-# Download the Embeddings from HuggingFace
 def download_hugging_face_embeddings():
-    embeddings = HuggingFaceEmbeddings(
+    return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
-        model_kwargs={"device": "cpu"},  # change to 'cuda' if GPU available
+        model_kwargs={"device": "cpu"},
         encode_kwargs={"normalize_embeddings": True}
     )
-
-    return embeddings
